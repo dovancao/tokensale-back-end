@@ -8,7 +8,6 @@ const EC = require('elliptic').ec;
 const ec = new EC('secp256k1');
 const keccak256 = require('js-sha3').keccak256;
 let web3 = new Web3();
-const crowdsaleABI = require('./Crowdsale.json');
 
 let Router = express.Router();
 
@@ -80,22 +79,6 @@ Router.post('/open-wallet', function(req, res){
             .status(error.status || 500)
             .send(error.message || 'Private key is wrong!')
     }
-})
-
-/** take web3 provider */
-Router.post('/crowd-sale', function(req, res){
-  let web3Instance = req.body.web3;
-  try {
-    web3Instance.eth.defaultAccount = web3.eth.accounts[0];
-    let crowdSaleContract = web3Instance.eth.contract(crowdsaleABI);
-    let crowdSale = crowdSaleContract.at('0xb51287b481c437bdd1c7eeb977491052b87fda94');
-    let instance = crowdSale.buyTokens(web3Instance.eth.defaultAccount);
-    res.status(200).send(instance);
-  } catch (error) {
-    console.log(error)
-    res.status(error.status || 500)
-      .send(error.message || 'You cannot buy our token!')
-  }
 })
 
 module.exports = Router;
